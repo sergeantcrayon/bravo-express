@@ -23,13 +23,13 @@ router.post('/', (req, res) => {
     });
 });
 
-router.get('/', async (req, res) => {
-  let lfgs = await Lfg.find();
-
-  res.send(lfgs);
-});
-
 router.post('/query', async (req, res) => {
+  const query = req.body;
+  if (query.tags && query.tags.length > 0) {
+    query.tags = {
+      $in: query.tags.map((tag) => new RegExp(`^${tag}`, 'i')),
+    };
+  }
   let lfgs = await Lfg.find(req.body);
   lfgs = lfgs.sort((a, b) => b.created.getTime() - a.created.getTime()).slice(0, 20);
   res.send(lfgs);
