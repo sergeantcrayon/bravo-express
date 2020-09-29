@@ -19,8 +19,7 @@
     "@types/express-jwt": "0.0.42",
     "@types/mongoose": "^5.7.36",
     "nodemon": "^2.0.4",
-    "ts-node-dev": "^1.0.0-pre.63",
-    "typescript": "^4.0.3"
+    "ts-node-dev": "^1.0.0-pre.63"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -29,6 +28,7 @@
     "express-jwt": "^6.0.0",
     "ts-node": "^9.0.0",
     "google-auth-library": "^6.1.0",
-    "mongoose": "^5.10.7"
+    "mongoose": "^5.10.7",
+    "typescript": "^4.0.3"
   }
 }
