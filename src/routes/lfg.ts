@@ -4,14 +4,13 @@ import Lfg from '../models/lfg.model';
 const router = express.Router();
 
 router.post('/', [authorizeToken], (req, res) => {
-  const user = req['user'];
-  console.log(user);
+  const user = req['user']['_doc'];
   req.body = {
     ...req.body,
     user: {
       name: user.name,
-      googleId: user.sub,
-      image: user.picture,
+      googleId: user.googleId,
+      image: user.image,
     },
   };
   const lfg = new Lfg(req.body);
