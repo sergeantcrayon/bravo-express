@@ -1,22 +1,33 @@
 import express from 'express';
-const router = express.Router();
-const User = require('../models/User');
+import { verifyGoogleToken } from '../middleware/auth';
+import User from '../models/user.model';
+import jwt from 'jsonwebtoken';
 
-router.post('/', (req, res) => {
-  const user = new User(req.body);
+const router = express.Router();
+
+router.post('/signup', [verifyGoogleToken], (req, res) => {
+  const google = req.google;
+  const body = req.body;
+  const user = new User({ ...body, googleId: google.sub, image: google.picture });
   user
     .save()
     .then((data) => {
-      res.json(data);
+      const accessToken = jwt.sign({ ...data }, process.env.GOOGLE_SECRET, { algorithm: 'HS256', expiresIn: '1 day' });
+      res.json(accessToken);
     })
     .catch((err) => {
       res.json({ message: err });
     });
 });
 
-router.get('/google/:id', async (req, res) => {
-  const user = await User.findOne({ googleId: req.params.id });
-  res.send(user);
+router.post('/login', [verifyGoogleToken], async (req, res) => {
+  const google = req.google;
+  const user = await User.findOne({ googleId: google.sub });
+  if (!user) {
+    return res.status(403).send({ error: 'Forbidden: Cannot find user with google id' });
+  }
+  const accessToken = jwt.sign({ ...user }, process.env.GOOGLE_SECRET, { algorithm: 'HS256', expiresIn: '1 day' });
+  res.json(accessToken);
 });
 
-module.exports = router;
+export default router;
