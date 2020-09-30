@@ -1,15 +1,16 @@
 import express from 'express';
+import { authorizeToken } from '../middleware/auth';
 import Lfg from '../models/lfg.model';
 const router = express.Router();
 
-router.post('/', (req, res) => {
-  const tokenObj = req['googleTokenId'];
+router.post('/', [authorizeToken], (req, res) => {
+  const user = req['user']['_doc'];
   req.body = {
     ...req.body,
     user: {
-      name: tokenObj.name,
-      googleId: tokenObj.sub,
-      image: tokenObj.picture,
+      name: user.name,
+      googleId: user.googleId,
+      image: user.image,
     },
   };
   const lfg = new Lfg(req.body);
