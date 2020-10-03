@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/signup', [verifyGoogleToken], (req, res) => {
   const google = req.google;
   const body = req.body;
-  const user = new User({ ...body, googleId: google.sub, image: google.picture });
+  const user = new User({ name: body.name, googleId: google.sub, image: google.picture });
   user
     .save()
     .then((data) => {

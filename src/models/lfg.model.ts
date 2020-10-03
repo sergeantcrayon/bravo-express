@@ -4,15 +4,17 @@ import { IPlatform, PlatformSchema } from './platform.model';
 import { GameModeSchema, IGameMode } from './game-mode.model';
 import { GameSchema, IGame } from './game.model';
 import { IUser, UserSchema } from './user.model';
+import { ILfgUser, LfgUserSchema } from './lfg-user.model';
 
 interface ILfg extends Document {
-  user: IUser;
   game: IGame;
+  owner: IUser;
+  users: Types.Array<ILfgUser>;
   platform: IPlatform;
   region: IRegion;
   gameModes: Types.Array<IGameMode>;
   ign: string;
-  playerCount: number;
+  maxPlayers: number;
   description: string;
   tags: Types.Array<string>;
   created: Date;
@@ -20,13 +22,14 @@ interface ILfg extends Document {
 
 const LfgSchema = new Schema(
   {
-    user: UserSchema,
     game: GameSchema,
+    owner: UserSchema,
+    users: [{ type: LfgUserSchema }],
     platform: PlatformSchema,
     region: RegionSchema,
     gameModes: [{ type: GameModeSchema }],
     ign: String,
-    playerCount: Number,
+    maxPlayers: Number,
     description: String,
     tags: [String],
     created: { type: Date, default: Date.now },

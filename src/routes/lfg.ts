@@ -1,17 +1,20 @@
 import express from 'express';
 import { authorizeToken } from '../middleware/auth';
 import Lfg from '../models/lfg.model';
+import { IUser } from '../models/user.model';
 const router = express.Router();
 
 router.post('/', [authorizeToken], (req, res) => {
   const user = req['user']['_doc'];
+  const owner = <IUser>{
+    name: user.name,
+    googleId: user.googleId,
+    image: user.image,
+  };
   req.body = {
     ...req.body,
-    user: {
-      name: user.name,
-      googleId: user.googleId,
-      image: user.image,
-    },
+    users: [{ ...owner, ign: req.body.ign }],
+    owner,
   };
   const lfg = new Lfg(req.body);
   lfg
