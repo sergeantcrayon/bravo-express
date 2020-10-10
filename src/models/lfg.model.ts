@@ -5,6 +5,7 @@ import { GameModeSchema, IGameMode } from './game-mode.model';
 import { GameSchema, IGame } from './game.model';
 import { IUser, UserSchema } from './user.model';
 import { ILfgUser, LfgUserSchema } from './lfg-user.model';
+import { CommentSchema, IComment } from './comment.model';
 
 interface ILfg extends Document {
   game: IGame;
@@ -18,6 +19,7 @@ interface ILfg extends Document {
   description: string;
   tags: Types.Array<string>;
   created: Date;
+  comments: Types.Array<IComment>;
 }
 
 const LfgSchema = new Schema(
@@ -33,6 +35,7 @@ const LfgSchema = new Schema(
     description: String,
     tags: [String],
     created: { type: Date, default: Date.now },
+    comments: [{ type: CommentSchema, default: [] }],
   },
   { _id: true }
 );

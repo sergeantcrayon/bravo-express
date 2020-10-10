@@ -36,6 +36,9 @@ router.post('/query', async (req, res) => {
   }
   let lfgs = await Lfg.find(req.body);
   lfgs = lfgs.sort((a, b) => b.created.getTime() - a.created.getTime()).slice(0, 20);
+  lfgs.forEach((lfg) => {
+    lfg.comments = lfg.comments.sort((a, b) => b.created.getTime() - a.created.getTime());
+  });
   res.send(lfgs);
 });
 
@@ -53,4 +56,15 @@ router.post('/join', [authorizeToken], async (req, res) => {
     res.send(lfg);
   }
 });
+
+router.post('/comment', [authorizeToken], async (req, res) => {
+  const params: { lfgId: string; text: string } = req.body;
+  const user: IUser = req['user']['_doc'];
+  const lfg = await Lfg.findOne({ _id: params.lfgId });
+  lfg.comments.push({ text: params.text, createdBy: user, created: new Date() });
+  lfg.save();
+  lfg.comments = lfg.comments.sort((a, b) => b.created.getTime() - a.created.getTime());
+  res.send(lfg);
+});
+
 export default router;
